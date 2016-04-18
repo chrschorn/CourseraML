@@ -13,9 +13,8 @@ J = 0;
 % Instructions: Compute the cost of a particular choice of theta
 %               You should set J to the cost.
 
-
-
-
+J = (1/(2*m)) * (X*theta - y)' * (X*theta - y);
+assert (J - computeCost(X, y, theta) < 0.001); % check if this implementation is equal to my previous one
 
 % =========================================================================
 
