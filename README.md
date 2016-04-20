@@ -1,3 +1,3 @@
 # CourseraML
 
-My repository for Andrew Ng's Coursera ML course.
+Code repository for the exercises of Andrew Ng's Coursera machine learning course.
