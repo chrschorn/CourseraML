@@ -21,13 +21,24 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
+X = [ones(size(X, 1), 1), X]; % add 1's as first column
 
+% input layer
+a1 = X'; % one set of inputs per column
 
+% hidden layer
+z2 = Theta1 * a1; 
+a2 = sigmoid(z2)'; % output vector of second layer
+a2 = [ones(size(a2, 1), 1), a2];
+a2 = a2'; % one set of inputs per column
 
+% output layer
+z3 = Theta2 * a2;
+a3 = sigmoid(z3)';
+h = a3;
 
-
-
-
+% determine result
+[~, p] = max(h, [], 2);
 
 % =========================================================================
 
