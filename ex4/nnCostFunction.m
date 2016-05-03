@@ -62,22 +62,59 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% recode y labels as vectors containing 0s and one 1
+y_tmp = zeros(m, num_labels);
+for i = 1:m
+    y_tmp(i, y(i)) = 1;
+end
+y = y_tmp;
+
+% feedforward
+a1 = [ones(m, 1), X];
+a2 = sigmoid(a1 * Theta1');
+a2 = [ones(m,1), a2];
+h = sigmoid(a2 * Theta2');
+
+% compute cost function J
+for i = 1:m
+    J = J + sum(-y(i,:) .* log(h(i, :)) - (1 - y(i, :)) .* log(1-h(i,:)));
+end
+
+J = (1/m) * J;
+
+% regularization
+J = J + (lambda/(2*m)) * ...
+    (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
 
 
+%%% backprop %%%
+c_delta1 = zeros(hidden_layer_size, input_layer_size+1);
+c_delta2 = zeros(num_labels, hidden_layer_size+1);
 
+for t = 1:m
+    % forwards
+    a1 = [1 ; X(t, :)'];
+    z2 = Theta1 * a1;
+    a2 = sigmoid(z2);
+    a2 = [1; a2];
+    a3 = sigmoid(Theta2 * a2);
+    
+    % backwards
+    delta3 = a3 - y(t, :)';
+    delta2 = Theta2' * delta3 .* sigmoidGradient([1; z2]);
+    delta2 = delta2(2:end);
+    
+    % calculate "capital deltas"
+    c_delta1 = c_delta1 + delta2 * a1';
+    c_delta2 = c_delta2 + delta3 * a2';    
+end
 
+Theta1_grad = (1/m) * c_delta1;
+Theta2_grad = (1/m) * c_delta2;
 
-
-
-
-
-
-
-
-
-
-
-
+% final regularization
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda/m) * Theta1(:, 2:end);
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda/m) * Theta2(:, 2:end);
 
 
 % -------------------------------------------------------------
