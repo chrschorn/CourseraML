@@ -42,6 +42,25 @@ Theta_grad = zeros(size(Theta));
 
 J = (1/2) * sum(sum( (((X*Theta') -  Y) .* R) .^ 2 ));
 
+% Collaborative filtering gradient X_grad
+for i = 1:num_movies
+    idx = find(R(i, :)==1);
+    Theta_tmp = Theta(idx, :);
+    Y_tmp = Y(i, idx);
+    X_grad(i, :) = (X(i, :) * Theta_tmp' - Y_tmp) * Theta_tmp +  lambda*X(i, :);
+end
+
+% Collaborative filtering gradient Theta_grad
+for i = 1:num_users
+    idx = find(R(:, i)==1);
+    X_tmp = X(idx, :);
+    Y_tmp = Y(idx, i);
+    Theta_grad(i, :) = (X_tmp * Theta(i, :)' - Y_tmp)' * X_tmp + lambda*Theta(i, :);
+end
+
+% Add normalization to cost function
+J = J + (lambda/2) * (sum(sum(Theta.^2)) + sum(sum(X.^2)));
+
 % =============================================================
 
 grad = [X_grad(:); Theta_grad(:)];
